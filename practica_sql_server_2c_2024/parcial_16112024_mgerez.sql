@@ -10,6 +10,7 @@
 
 -- Nota: No se permiten select en el from, es decir, select... (from select...) as T...
 
+-- MAL USA CTEs EN EL FROM
 WITH Compras2012 AS (
     SELECT 
         f.fact_cliente AS clie_codigo,
@@ -59,8 +60,50 @@ JOIN ClientesSinComprasImpares csci ON cmtr.clie_codigo = csci.clie_codigo
 JOIN CategoriaMasComprada cmc ON cmtr.clie_codigo = cmc.clie_codigo AND cmc.rank_rubro = 1
 ORDER BY cmtr.total_comprado DESC;
 
--- 2.Implementar los objetos necesarios para registrar, en tiempo real, los 10 productos mas vendidos por año
--- en una tabla específica.Esta tabla debe contener exclusivamente la información requerida, sin incluir filas adicionales.
+-- BIEN
+
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY cmtr.total_comprado DESC) AS numero_fila,
+    cmtr.clie_codigo,
+    cmtr.clie_nombre,
+    cmtr.total_comprado,
+    r.rubr_detalle AS categoria_mas_comprada
+FROM (
+    SELECT 
+        f.fact_cliente AS clie_codigo,
+        c.clie_razon_social AS clie_nombre,
+        COUNT(DISTINCT p.prod_rubro) AS rubros_diferentes,
+        SUM(i.item_cantidad) AS total_comprado
+    FROM Factura f
+    JOIN Item_Factura i ON f.fact_tipo = i.item_tipo AND f.fact_sucursal = i.item_sucursal AND f.fact_numero = i.item_numero
+    JOIN Producto p ON i.item_producto = p.prod_codigo
+    JOIN Cliente c ON f.fact_cliente = c.clie_codigo 
+    WHERE YEAR(f.fact_fecha) = 2012
+    GROUP BY f.fact_cliente, c.clie_razon_social
+    HAVING COUNT(DISTINCT p.prod_rubro) > 3
+) cmtr
+JOIN (
+    SELECT DISTINCT
+        c.clie_codigo
+    FROM Cliente c
+    LEFT JOIN Factura f ON c.clie_codigo = f.fact_cliente AND YEAR(f.fact_fecha) % 2 <> 0
+    WHERE f.fact_fecha IS NULL
+) csci ON cmtr.clie_codigo = csci.clie_codigo
+JOIN (
+    SELECT 
+        f.fact_cliente AS clie_codigo,
+        p.prod_rubro,
+        RANK() OVER (PARTITION BY f.fact_cliente ORDER BY SUM(i.item_cantidad) DESC) AS rank_rubro
+    FROM Factura f
+    JOIN Item_Factura i ON f.fact_tipo = i.item_tipo AND f.fact_sucursal = i.item_sucursal AND f.fact_numero = i.item_numero
+    JOIN Producto p ON i.item_producto = p.prod_codigo
+    WHERE YEAR(f.fact_fecha) = 2012
+    GROUP BY f.fact_cliente, p.prod_rubro
+) cmc ON cmtr.clie_codigo = cmc.clie_codigo AND cmc.rank_rubro = 1
+JOIN Rubro r ON cmc.prod_rubro = r.rubr_id
+ORDER BY cmtr.total_comprado DESC;
+
+-- 2.Implementar los objetos necesarios para registrar, en tiempo real, los 10 productos mas vendidos por año en una tabla específica.Esta tabla debe contener exclusivamente la información requerida, sin incluir filas adicionales.
 -- Los "mas vendidos" se definen como aquellos productos con el mayor número de unidades vendidas.
 
 
@@ -75,31 +118,87 @@ CREATE TABLE ProductosMasVendidos (
 
 --  Creo el procedimiento almacenado
  
-ALTER PROCEDURE ActualizarProductosMasVendidos
-AS
-BEGIN
-    -- Limpio la tabla antes de actualizar
-    DELETE FROM ProductosMasVendidos;
+-- CREATE OR ALTER PROCEDURE ActualizarProductosMasVendidos
+-- AS
+-- BEGIN
+--     -- Limpio la tabla antes de actualizar
+--     DELETE FROM ProductosMasVendidos;
 
-    -- Los 10 productos más vendidos por año
-    WITH ProductosVendidos AS (
-        SELECT 
-            YEAR(f.fact_fecha) AS año,
-            i.item_producto,
-            SUM(i.item_cantidad) AS unidades_vendidas,
-            ROW_NUMBER() OVER (PARTITION BY YEAR(f.fact_fecha) ORDER BY SUM(i.item_cantidad) DESC) AS fila
-        FROM Factura f
-        JOIN Item_Factura i ON f.fact_tipo = i.item_tipo AND f.fact_sucursal = i.item_sucursal AND f.fact_numero = i.item_numero
-        GROUP BY YEAR(f.fact_fecha), i.item_producto
-    )
-    INSERT INTO ProductosMasVendidos (año, prod_codigo, unidades_vendidas)
-    SELECT 
-        año,
-        item_producto,
-        unidades_vendidas
-    FROM ProductosVendidos
-    WHERE fila <= 10;
-END;
+--     -- Los 10 productos más vendidos por año
+--     WITH ProductosVendidos AS (
+--         SELECT 
+--             YEAR(f.fact_fecha) AS año,
+--             i.item_producto,
+--             SUM(i.item_cantidad) AS unidades_vendidas,
+--             ROW_NUMBER() OVER (PARTITION BY YEAR(f.fact_fecha) ORDER BY SUM(i.item_cantidad) DESC) AS fila
+--         FROM Factura f
+--         JOIN Item_Factura i ON f.fact_tipo = i.item_tipo AND f.fact_sucursal = i.item_sucursal AND f.fact_numero = i.item_numero
+--         GROUP BY YEAR(f.fact_fecha), i.item_producto
+--     )
+--     INSERT INTO ProductosMasVendidos (año, prod_codigo, unidades_vendidas)
+--     SELECT 
+--         año,
+--         item_producto,
+--         unidades_vendidas
+--     FROM ProductosVendidos
+--     WHERE fila <= 10;
+-- END;
+
+
+-- -- ALTERNATIVA CORRECTA : SOLO TRIGGER
+
+-- DROP TABLE IF EXISTS Top_10_Productos_Vendidos;
+
+-- CREATE TABLE Top_10_Productos_Vendidos (
+--     Año INT,
+--     Producto CHAR(8),
+--     Total_Vendido DECIMAL(12, 2),
+--     CONSTRAINT PK_Top10 PRIMARY KEY (Año, Producto)
+-- );
+-- GO
+
+
+-- CREATE OR ALTER TRIGGER tr_actualizar_top_10 
+-- ON dbo.Item_Factura
+-- AFTER INSERT, UPDATE, DELETE
+-- AS
+-- BEGIN
+--     SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+--     DECLARE @año_actual INT;
+
+--     DECLARE cursor_años CURSOR FOR
+--         SELECT DISTINCT YEAR(f.fact_fecha)
+--         FROM Factura AS f
+--         JOIN Item_Factura AS i
+--           ON f.fact_tipo + f.fact_sucursal + f.fact_numero = i.item_tipo + i.item_sucursal + i.item_numero;
+
+--     OPEN cursor_años;
+--     FETCH NEXT FROM cursor_años INTO @año_actual;
+
+--     WHILE @@FETCH_STATUS = 0
+--     BEGIN
+--         DELETE FROM Top_10_Productos_Vendidos WHERE Año = @año_actual;
+
+--         INSERT INTO Top_10_Productos_Vendidos (Año, Producto, Total_Vendido)
+--         SELECT TOP 10 
+--                @año_actual AS Año,
+--                i.item_producto AS Producto,
+--                SUM(i.item_cantidad) AS [Total Vendido]
+--         FROM Factura AS f
+--         JOIN Item_Factura AS i
+--           ON f.fact_tipo + f.fact_sucursal + f.fact_numero = i.item_tipo + i.item_sucursal + i.item_numero
+--         WHERE YEAR(f.fact_fecha) = @año_actual
+--         GROUP BY i.item_producto
+--         ORDER BY SUM(i.item_cantidad) DESC;
+
+--         FETCH NEXT FROM cursor_años INTO @año_actual;
+--     END;
+
+--     CLOSE cursor_años;
+--     DEALLOCATE cursor_años;
+-- END;
+-- GO
 
 -------------------------------- TESTING -------------------------------------
 

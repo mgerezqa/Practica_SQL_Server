@@ -1,0 +1,4 @@
+Observaciones
+Ejercicio 14 de la guía parece ser muy relevante para varios enunciados, ya que se enfoca en estadísticas de ventas por cliente.
+Ejercicio 25 es útil para consultas que requieren estadísticas detalladas por año y familia.
+Ejercicio 17 es adecuado para reportes por periodos.

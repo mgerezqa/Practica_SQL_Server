@@ -1,0 +1,12 @@
+-- 17.Escriba una consulta que retorne una estadística de ventas por año y mes para cada
+-- producto.La consulta debe retornar:
+-- PERIODO: Año y mes de la estadística con el formato YYYYMM
+-- PROD: Código de producto
+-- DETALLE: Detalle del producto
+-- CANTIDAD_VENDIDA= Cantidad vendida del producto en el periodo
+-- VENTAS_AÑO_ANT= Cantidad vendida del producto en el mismo mes del periodo
+-- pero del año anterior
+-- CANT_FACTURAS= Cantidad de facturas en las que se vendió el producto en el
+-- periodo
+-- La consulta no puede mostrar NULL en ninguna de sus columnas y debe estar ordenada
+-- por periodo y código de producto.

@@ -124,4 +124,3 @@ HAVING
     THEN i.item_cantidad ELSE 0 END), 0)
 ORDER BY cantidad_ventas_2012 DESC;
 
-

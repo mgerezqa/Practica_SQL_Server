@@ -1,0 +1,7 @@
+1.Estructura de datos
+a. Elija un modo de implementación de árboles en memoria y desarrollelo.
+b. Describa el concepto de split y fusión en árboll B+.
+
+2.Base de datos
+a.Describa el diseño de un multicubo en OLAP, cite un ejemplo.
+b.Desarrolle el objeto tabla temporal y compárelo con un cursor.

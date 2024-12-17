@@ -16,3 +16,13 @@ GO
 
 
 DROP TRIGGER IF EXISTS TR_ACTUALIZAR_PRODUCTOS_VENDIDOS;
+
+-- Filtrar triggers
+
+SELECT * 
+FROM sys.triggers 
+WHERE name = 'TR_P16112024_Actualizar_Productos_Mas_Vendidos';
+
+-- HABILITAR TRIGGER
+
+ENABLE TRIGGER dbo.TR_P16112024_Actualizar_Productos_Mas_Vendidos ON dbo.Item_Factura;

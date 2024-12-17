@@ -1,0 +1,79 @@
+Analizaré los ejercicios y te ayudaré a identificar los temas fundamentales que debes dominar para tu examen de SQL Server. Veamos los patrones y conceptos más importantes que se repiten:
+Temas Fundamentales que debes dominar:
+
+Manejo de Stock y Productos Compuestos
+
+
+Ejercicios 3, 9, 16 de la guía y EJ3, EJ9 del parcial
+Este es un tema muy recurrente que incluye:
+
+Descuento de stock automático
+Manejo de productos compuestos (combos)
+Validaciones de stock disponible
+Conversión entre productos individuales y combos
+
+
+
+
+Validaciones de Precios y Control de Ventas
+
+
+Ejercicios 8, 14, 18, 30 de la guía y EJ2, EJ4, EJ11 del parcial
+Aspectos clave:
+
+Control de límites de crédito
+Validación de precios de combos vs componentes
+Control de aumentos de precios
+Límites de ventas por cliente
+
+
+
+
+Integridad Referencial y Manejo de Datos
+
+
+Ejercicios 10, 12, 25 de la guía y EJ6, EJ8, EJ10 del parcial
+Conceptos importantes:
+
+Creación de constraints personalizados
+Manejo de foreign keys
+Validación de integridad sin usar constraints tradicionales
+Limpieza y corrección de datos
+
+
+
+
+Estructura Jerárquica de Empleados
+
+
+Ejercicios 3, 11, 13, 19 de la guía
+Temas clave:
+
+Manejo de jerarquías (jefes y empleados)
+Cálculos recursivos
+Validaciones de salarios y antigüedad
+Control de cantidad de subordinados
+
+
+
+
+Triggers y Actualizaciones Automáticas
+
+
+Ejercicios 9, 16, 20 de la guía y EJ7 del parcial
+Conceptos fundamentales:
+
+Actualización automática de comisiones
+Mantenimiento de tablas de resumen
+Control de stock automático
+Validaciones en línea
+
+
+
+Recomendación de ejercicios para practicar:
+
+Ejercicio 16 de la guía (manejo completo de stock)
+EJ9 del parcial (composición de combos)
+Ejercicio 3 de la guía (estructura jerárquica)
+EJ7 del parcial (tabla de resumen con triggers)
+Ejercicio 13 de la guía (validaciones jerárquicas complejas)

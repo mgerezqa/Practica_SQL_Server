@@ -1,0 +1,93 @@
+EJ1
+
+Realizar un stored procedure que reciba un código de producto y una fecha y devuelva la mayor cantidad de
+días consecutivos a partir de esa fecha que el producto tuvo al menos la venta de una unidad en el día, el
+sistema de ventas on line está habilitado 24-7 por lo que se deben evaluar todos los días incluyendo domingos y feriados.
+
+
+EJ2
+2. Implementar una regla de negocio de validación en línea que permita
+implementar una lógica de control de precios en las ventas. Se deberá
+poder seleccionar una lista de rubros y aquellos productos de los rubros
+que sean los seleccionados no podrán aumentar por mes más de un 2
+%. En caso que no se tenga referencia del mes anterior no validar
+dicha regla.
+
+EJ3
+
+Implementar una regla de negocio de validación en línea que permita
+validar el STOCK al realizarse una venta. Cada venta se debe
+descontar sobre el depósito 00. En caso de que se venda un producto
+compuesto, el descuento de stock se debe realizar por sus
+componentes. Si no hay STOCK para ese artículo, no se deberá
+guardar ese artículo, pero si los otros en los cuales hay stock positivo.
+Es decir, solamente se deberán guardar aquellos para los cuales si hay
+stock, sin guardarse los que no poseen cantidades suficientes.
+
+EJ4
+Implementar una regla de negocio en línea donde nunca una factura
+nueva tenga un precio de producto distinto al que figura en la tabla
+PRODUCTO. Registrar en una estructura adicional todos los casos
+donde se intenta guardar un precio distinto.
+
+EJ5
+Implementar una regla de negocio en línea donde se valide que nunca
+un producto compuesto pueda estar compuesto por componentes de
+rubros distintos a el.
+
+EJ6
+2. Suponiendo que se aplican los siguientes cambios en el modelo de
+datos:
+
+Cambio 1) create table provincia (id 'int primary key, nómbre char(100)) ;
+Cambio 2) alter table cliente add pcia_id int null:
+
+Crear el]los objetos necesarios para implementar el concepto de foreign
+key entre 2 cliente y provincia,
+
+Nota: No se permite agregar una constraint de tipo FOREIGN KEY entre la
+tabla y el campo agregado.
+
+EJ7
+2. Implementar una regla de negocio para mantener siempre consistente
+(actualizada bajo cualquier circunstancia) INSERT UPDATE DELETE
+
+una nueva tabla llamada PRODUCTOS_VENDIDOS. 
+En esta tabla debe registrar el periodo (YYYYMM),
+ el código de producto,
+  el precio máximo de venta 
+  y las unidades vendidas. 
+  
+  Toda esta información debe estar por periodo (YYYYMM).*/
+
+EJ8
+2. Por un error de programación la tabla item factura le ejecutaron DROP a la primary key y a sus foreign key.
+Este evento permitió la inserción de filas duplicadas (exactas e iguales) y también inconsistencias debido a la falta de FK.
+Realizar un algoritmo que resuelva este inconveniente depurando los datos de manera coherente y lógica y que deje la estructura de la tabla item factura de manera correcta.
+
+EJ9
+1. Implementar una regla de negocio en línea que al realizar una venta
+(SOLO INSERCION) permita componer los productos descompuestos,
+es decir, si se guardan en la factura 2 hamb. 2 papas 2 gaseosas se
+deberá guardar en la factura 2 (DOS) COMBO |. Si 1 combo 1 equivale
+a: 1 hamb. 1 papa y 1 gaseosa.
+
+Nota: Considerar que cada vez que se guardan los items, se mandan
+todos los productos de ese item a la vez, y no de manera parcial.
+
+EJ10
+2. Actualmente el campo fact_vendedor representa al empleado que vendió
+la factura. Implementar el/los objetos necesarios para respetar la
+integridad referenciales de dicho campo suponiendo que no existe una
+foreign key entre ambos.
+
+NOTA: No se puede usar una foreign key para el ejercicio, deberá buscar
+otro método
+
+EJ11
+Se requiere realizar una verificación de los precios de los COMBOS, para
+ello se solicita que cree el o los objetos necesarios para realizar una
+operación que actualice que el precio de un producto compuesto
+(COMBO) es el 90% de la suma de los precios de sus componentes por
+las cantidades que los componen. Se debe considerar que un producto
+compuesto puede estar compuesto por otros productos compuestos.

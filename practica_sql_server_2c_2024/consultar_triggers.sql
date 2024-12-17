@@ -1,4 +1,6 @@
 
+USE GD2015C1
+
 
 SELECT name AS TriggerName,
        object_id AS TriggerID,
@@ -7,3 +9,10 @@ SELECT name AS TriggerName,
        modify_date AS LastModifiedDate
 FROM sys.triggers;
 GO
+
+-- BORRAR TRIGGER
+
+-- DROP TRIGGER IF EXISTS <TRIGGER_NAME>;
+
+
+DROP TRIGGER IF EXISTS TR_ACTUALIZAR_PRODUCTOS_VENDIDOS;
